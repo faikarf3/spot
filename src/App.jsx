@@ -4,6 +4,7 @@ import Login from './pages/Login';
 import Signup from './pages/Signup';
 import MainLayout from './components/MainLayout';
 import Dashboard from './pages/Dashboard';
+import Event from './pages/Event';
 import './App.css';
 
 function App() {
@@ -39,6 +40,7 @@ function App() {
 				<Route path="/terms" element={<div>Terms Page</div>} />
 				<Route path="/privacy" element={<div>Privacy Page</div>} />
 				<Route path="/dashboard" element={<Dashboard />} />
+				<Route path="/event/:id" element={<Event />} />
 			</Routes>
 		</Router>
 	);

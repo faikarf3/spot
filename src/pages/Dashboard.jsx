@@ -1,6 +1,7 @@
 import React from 'react';
 import Nav from '../components/Nav';
 import EventCard from '../components/EventCard';
+import Footer from '../components/Footer';
 
 const SectionTitle = ({ children }) => (
   <h2 className="text-2xl font-bold text-brand-text-primary mb-4 mt-10">{children}</h2>
@@ -9,21 +10,25 @@ const SectionTitle = ({ children }) => (
 const FeaturedEvents = () => {
   const events = [
     {
+      id: 'featured-1',
       image: 'https://placehold.co/400x200/222/fff?text=Live+Music',
       title: 'Live Music Night',
       description: 'Experience the best local bands',
     },
     {
+      id: 'featured-2',
       image: 'https://placehold.co/400x200/eee/222?text=Art+Showcase',
       title: 'Modern Art Showcase',
       description: 'Explore contemporary art',
     },
     {
+      id: 'featured-3',
       image: 'https://placehold.co/400x200/9fc/fff?text=Food+Festival',
       title: 'Taste of the City',
       description: 'Sample diverse cuisines',
     },
     {
+      id: 'featured-4',
       image: 'https://placehold.co/400x200/111/fff?text=Premiere',
       title: 'Broadway Premiere',
       description: 'Catch the latest hit show',
@@ -33,7 +38,7 @@ const FeaturedEvents = () => {
     <section>
       <SectionTitle>Featured Events</SectionTitle>
       <div className="flex gap-6 flex-wrap justify-center">
-        {events.map((e, i) => <EventCard key={i} {...e} />)}
+        {events.map((e, i) => <EventCard key={e.id} {...e} />)}
       </div>
     </section>
   );
@@ -42,21 +47,25 @@ const FeaturedEvents = () => {
 const PopularSpots = () => {
   const spots = [
     {
+      id: 'spot-1',
       image: 'https://placehold.co/400x200/fff/222?text=Green+Bean+Cafe',
       title: 'The Green Bean Cafe',
       description: 'Cozy cafe with great coffee',
     },
     {
+      id: 'spot-2',
       image: 'https://placehold.co/400x200/aaa/fff?text=City+Museum',
       title: 'City Museum of Art',
       description: 'Explore world-class art collections',
     },
     {
+      id: 'spot-3',
       image: 'https://placehold.co/400x200/7fc/fff?text=Riverside+Park',
       title: 'Riverside Park',
       description: 'Enjoy scenic views and walking trails',
     },
     {
+      id: 'spot-4',
       image: 'https://placehold.co/400x200/222/fff?text=Jazz+Corner',
       title: 'The Jazz Corner',
       description: 'Live jazz performances nightly',
@@ -66,7 +75,7 @@ const PopularSpots = () => {
     <section>
       <SectionTitle>Popular Spots</SectionTitle>
       <div className="flex gap-6 flex-wrap justify-center">
-        {spots.map((s, i) => <EventCard key={i} {...s} />)}
+        {spots.map((s, i) => <EventCard key={s.id} {...s} />)}
       </div>
     </section>
   );
@@ -75,21 +84,25 @@ const PopularSpots = () => {
 const RecommendedForYou = () => {
   const recs = [
     {
+      id: 'rec-1',
       image: 'https://placehold.co/400x200/000/fff?text=Film+Screening',
       title: 'Indie Film Screening',
       description: 'Discover independent cinema',
     },
     {
+      id: 'rec-2',
       image: 'https://placehold.co/400x200/654/fff?text=Craft+Beer',
       title: 'Craft Beer Tasting',
       description: 'Sample local craft brews',
     },
     {
+      id: 'rec-3',
       image: 'https://placehold.co/400x200/ccc/222?text=Yoga',
       title: 'Yoga in the Park',
       description: 'Relax with outdoor yoga',
     },
     {
+      id: 'rec-4',
       image: 'https://placehold.co/400x200/222/fff?text=Book+Club',
       title: 'Book Club Meeting',
       description: 'Discuss your favorite books',
@@ -99,46 +112,7 @@ const RecommendedForYou = () => {
     <section>
       <SectionTitle>Recommended for You</SectionTitle>
       <div className="flex gap-6 flex-wrap justify-center">
-        {recs.map((r, i) => <EventCard key={i} {...r} />)}
-      </div>
-    </section>
-  );
-};
-
-const UpcomingEvents = () => {
-  const events = [
-    {
-      date: 'Tomorrow',
-      title: 'Tech Meetup',
-      description: 'Networking event for tech professionals',
-      image: 'https://placehold.co/400x200/234/fff?text=Tech+Meetup',
-    },
-    {
-      date: 'Next Week',
-      title: 'Food Truck Festival',
-      description: 'A variety of food trucks offering diverse cuisines',
-      image: 'https://placehold.co/400x200/3a7/fff?text=Food+Truck',
-    },
-    {
-      date: 'In Two Weeks',
-      title: 'Outdoor Concert',
-      description: 'Live music performance in the park',
-      image: 'https://placehold.co/400x200/9cf/fff?text=Outdoor+Concert',
-    },
-  ];
-  return (
-    <section>
-      <SectionTitle>Upcoming Events</SectionTitle>
-      <div className="flex flex-col gap-8 items-center">
-        {events.map((e, i) => (
-          <EventCard
-            key={i}
-            {...e}
-            date={e.date}
-            buttonLabel="View Details"
-            layout="horizontal"
-          />
-        ))}
+        {recs.map((r, i) => <EventCard key={r.id} {...r} />)}
       </div>
     </section>
   );
@@ -146,9 +120,9 @@ const UpcomingEvents = () => {
 
 const Dashboard = () => {
   return (
-    <div className="bg-[#f9f6f5] min-h-screen pb-20">
+    <div className="bg-[#f9f6f5] min-h-screen flex flex-col">
       <Nav />
-      <div className="container mx-auto px-4 pt-28">
+      <div className="container mx-auto px-4 pt-28 flex-1 pb-24">
         <div className="mb-8">
           <input
             type="text"
@@ -159,8 +133,8 @@ const Dashboard = () => {
         <FeaturedEvents />
         <PopularSpots />
         <RecommendedForYou />
-        <UpcomingEvents />
       </div>
+      <Footer />
     </div>
   );
 };
