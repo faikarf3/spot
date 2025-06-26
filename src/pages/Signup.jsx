@@ -30,6 +30,7 @@ export default function Register() {
       <div className="max-w-md w-full bg-white p-8 rounded-2xl shadow-lg">
         <div className="text-center mb-6">
           <h1 className="text-2xl font-bold">Create Account</h1>
+          <br></br>
           <p className="text-gray-600">Sign up to get started</p>
         </div>
         <form onSubmit={handleSubmit} className="space-y-6">
