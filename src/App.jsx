@@ -3,6 +3,7 @@ import Home from './pages/Home';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
 import MainLayout from './components/MainLayout';
+import Dashboard from './pages/Dashboard';
 import './App.css';
 
 function App() {
@@ -37,6 +38,7 @@ function App() {
 				<Route path="/contact" element={<div>Contact Page</div>} />
 				<Route path="/terms" element={<div>Terms Page</div>} />
 				<Route path="/privacy" element={<div>Privacy Page</div>} />
+				<Route path="/dashboard" element={<Dashboard />} />
 			</Routes>
 		</Router>
 	);
