@@ -4,7 +4,6 @@ import { Link } from 'react-router-dom';
 /**
  * Register component renders a sign-up form with name, email,
  * password, password confirmation, and a link to the login page.
- * Expects to be used within a <BrowserRouter> context at the app root.
  */
 
 export default function Register() {
@@ -21,7 +20,7 @@ export default function Register() {
       return;
     }
     setError('');
-    // TODO: integrate with your registration API
+    // Waiting to integrate with a registration API
     console.log({ name, email, password });
   };
 
@@ -118,22 +117,3 @@ export default function Register() {
   );
 }
 
-// Note: For testing, create a separate file `Register.test.jsx`:
-// import React from 'react';
-// import { render, screen } from '@testing-library/react';
-// import { MemoryRouter } from 'react-router-dom';
-// import Register from './Register';
-// describe('Register component', () => {
-//   test('renders form fields and button', () => {
-//     render(
-//       <MemoryRouter>
-//         <Register />
-//       </MemoryRouter>
-//     );
-//     expect(screen.getByLabelText(/Full Name/i)).toBeInTheDocument();
-//     expect(screen.getByLabelText(/Email address/i)).toBeInTheDocument();
-//     expect(screen.getByLabelText(/Password/i)).toBeInTheDocument();
-//     expect(screen.getByLabelText(/Confirm Password/i)).toBeInTheDocument();
-//     expect(screen.getByRole('button', { name: /Sign Up/i })).toBeInTheDocument();
-//   });
-// });
