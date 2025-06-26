@@ -3,9 +3,9 @@ import { Link } from 'react-router-dom';
 
 /**
  * Login component renders a sign-in form with email, password,
- * remember-me checkbox, and links. Expects to be used within a
- * <BrowserRouter> context at the app root.
+ * remember-me checkbox, and links. 
  */
+
 export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -13,7 +13,7 @@ export default function Login() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // TODO: integrate with your authentication API
+    // Waiting to integrate with a authentication API
     console.log({ email, password, remember });
   };
 
