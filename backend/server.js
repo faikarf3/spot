@@ -12,7 +12,7 @@ const app = express();
 const PORT = process.env.PORT || 3001;
 
 // MongoDB Atlas connection
-const MONGO_URI = 'mongodb+srv://spot-admin:ekFAzZaalVvn71rJ@spots.vap8fd5.mongodb.net/?retryWrites=true&w=majority&appName=SPOTS';
+const MONGO_URI = 'mongodb+srv://spots-admin:IHFvEaHy74aSKkPH@spots.qrzztnh.mongodb.net/Users?retryWrites=true&w=majority&appName=SPOTS';
 mongoose.connect(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
 	.then(() => console.log('✅ Connected to MongoDB Atlas'))
 	.catch((err) => console.error('❌ MongoDB connection error:', err));

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 /**
  * Register component renders a sign-up form with name, email,
@@ -12,16 +12,37 @@ export default function Register() {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
+  const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setError('');
+    setSuccess('');
     if (password !== confirmPassword) {
       setError('Passwords do not match.');
       return;
     }
-    setError('');
-    // Waiting to integrate with a registration API
-    console.log({ name, email, password });
+    try {
+      const res = await fetch('http://localhost:3001/api/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username: name, email, password })
+      });
+      const data = await res.json();
+      if (data.success) {
+        setSuccess('Registration successful! Redirecting to profile...');
+        setTimeout(() => navigate('/profile'), 1000);
+        setName('');
+        setEmail('');
+        setPassword('');
+        setConfirmPassword('');
+      } else {
+        setError(data.message || 'Registration failed.');
+      }
+    } catch (err) {
+      setError('Server error. Please try again later.');
+    }
   };
 
   return (
@@ -97,6 +118,7 @@ export default function Register() {
           </div>
 
           {error && <p className="text-red-500 text-sm">{error}</p>}
+          {success && <p className="text-green-600 text-sm">{success}</p>}
 
           <button
             type="submit"
