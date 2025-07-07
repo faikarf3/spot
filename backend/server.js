@@ -39,7 +39,7 @@ userSchema.pre('save', async function(next) {
 	}
 });
 
-const User = mongoose.model('User', userSchema);
+const User = mongoose.model('User', userSchema, 'user');
 
 app.get('/', (req, res) => {
 	res.json({
@@ -133,6 +133,41 @@ app.get('/api/users', async (req, res) => {
 		const users = await User.find({}, '-password'); // Exclude password field
 		res.json({ success: true, users });
 	} catch (err) {
+		res.status(500).json({ success: false, message: 'Server error.' });
+	}
+});
+
+// Get user by ID (excluding password)
+app.get('/api/users/:id', async (req, res) => {
+	try {
+		const user = await User.findById(req.params.id, '-password');
+		if (!user) {
+			return res.status(404).json({ success: false, message: 'User not found.' });
+		}
+		res.json({ success: true, user });
+	} catch (err) {
+		res.status(500).json({ success: false, message: 'Server error.' });
+	}
+});
+
+// Login endpoint
+app.post('/api/login', async (req, res) => {
+	try {
+		const { email, password } = req.body;
+		if (!email || !password) {
+			return res.status(400).json({ success: false, message: 'Email and password are required.' });
+		}
+		const user = await User.findOne({ email });
+		if (!user) {
+			return res.status(401).json({ success: false, message: 'Invalid email or password.' });
+		}
+		const isMatch = await bcrypt.compare(password, user.password);
+		if (!isMatch) {
+			return res.status(401).json({ success: false, message: 'Invalid email or password.' });
+		}
+		res.json({ success: true, message: 'Login successful.', user: { username: user.username, email: user.email, id: user._id } });
+	} catch (err) {
+		console.error('Login error:', err);
 		res.status(500).json({ success: false, message: 'Server error.' });
 	}
 });
