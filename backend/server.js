@@ -5,11 +5,13 @@ import axios from 'axios';
 import * as cheerio from 'cheerio';
 import mongoose from 'mongoose';
 import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
 
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3001;
+const JWT_SECRET = process.env.JWT_SECRET || 'your_jwt_secret';
 
 // MongoDB Atlas connection
 const MONGO_URI = 'mongodb+srv://spots-admin:IHFvEaHy74aSKkPH@spots.qrzztnh.mongodb.net/Users?retryWrites=true&w=majority&appName=SPOTS';
@@ -165,7 +167,18 @@ app.post('/api/login', async (req, res) => {
 		if (!isMatch) {
 			return res.status(401).json({ success: false, message: 'Invalid email or password.' });
 		}
-		res.json({ success: true, message: 'Login successful.', user: { username: user.username, email: user.email, id: user._id } });
+		// Generate JWT
+		const token = jwt.sign(
+			{ id: user._id, email: user.email, username: user.username },
+			JWT_SECRET,
+			{ expiresIn: '1h' }
+		);
+		res.json({
+			success: true,
+			message: 'Login successful.',
+			user: { username: user.username, email: user.email, id: user._id },
+			token
+		});
 	} catch (err) {
 		console.error('Login error:', err);
 		res.status(500).json({ success: false, message: 'Server error.' });

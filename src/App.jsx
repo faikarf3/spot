@@ -6,6 +6,7 @@ import MainLayout from './components/MainLayout';
 import Dashboard from './pages/Dashboard';
 import Event from './pages/Event';
 import Profile from './pages/Profile';
+import Create from './pages/Create';
 import './App.css';
 
 function App() {
@@ -43,6 +44,7 @@ function App() {
 				<Route path="/dashboard" element={<Dashboard />} />
 				<Route path="/event/:id" element={<Event />} />
 				<Route path="/profile" element={<Profile />} />
+				<Route path="/create" element={<Create />} />
 			</Routes>
 		</Router>
 	);

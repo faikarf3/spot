@@ -27,6 +27,7 @@ export default function Login() {
       const data = await res.json();
       if (data.success) {
         localStorage.setItem('user', JSON.stringify(data.user));
+        localStorage.setItem('token', data.token);
         setSuccess('Login successful! Redirecting to profile...');
         setTimeout(() => navigate('/profile'), 1000);
       } else {
