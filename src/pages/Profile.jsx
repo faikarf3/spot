@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import ProfileSidebar from '../components/ProfileSidebar';
 
 const settings = [
@@ -13,6 +14,7 @@ const Profile = () => {
   const [user, setUser] = useState(null);
   const [error, setError] = useState('');
   const localUser = JSON.parse(localStorage.getItem('user'));
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (localUser && localUser.id) {
@@ -28,10 +30,14 @@ const Profile = () => {
     }
   }, []);
 
+  const handleLogout = () => {
+    localStorage.removeItem('user');
+    navigate('/');
+  };
+
   return (
     <div className="min-h-screen flex">
       <ProfileSidebar user={user} />
-      {/* Main Content */}
       <main className="flex-1 px-8 py-10 ml-64">
         <h1 className="text-3xl font-bold mb-1">Profile</h1>
         <div className="text-[#b48b7d] mb-8">Manage your account settings and preferences</div>
@@ -46,7 +52,6 @@ const Profile = () => {
             <div className="text-[#b48b7d] font-medium">Joined in 2021</div>
           </div>
         </div>
-        {/* Upcoming Events */}
         <div className="mb-12">
           <h2 className="text-xl font-bold mb-4">Upcoming</h2>
           <div className="flex flex-col items-center">
@@ -60,7 +65,6 @@ const Profile = () => {
             <div className="text-[#b48b7d]">Explore events and add them to your calendar</div>
           </div>
         </div>
-        {/* Past Events */}
         <div className="mb-12">
           <h2 className="text-xl font-bold mb-4">Past</h2>
           <div className="flex flex-col items-center">
@@ -74,7 +78,6 @@ const Profile = () => {
             <div className="text-[#b48b7d]">Explore events and add them to your calendar</div>
           </div>
         </div>
-        {/* Settings */}
         <div className="mb-8">
           <h2 className="text-xl font-bold mb-4">Settings</h2>
           <div className="flex flex-col gap-4">
@@ -89,11 +92,14 @@ const Profile = () => {
             ))}
           </div>
         </div>
-        <button className="bg-[#f3e9e6] text-black px-6 py-2 rounded-lg font-semibold hover:bg-[#e2d1c3] transition">Log Out</button>
+        <button onClick={handleLogout} className="bg-[#f3e9e6] text-black px-6 py-2 rounded-lg font-semibold hover:bg-[#e2d1c3] transition">
+          Log Out
+        </button>
         {error && <p className="text-red-500 mt-8 text-center">{error}</p>}
       </main>
     </div>
   );
 };
 
-export default Profile; 
+export default Profile;
+ 
