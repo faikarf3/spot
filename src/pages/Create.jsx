@@ -13,7 +13,7 @@ const Create = () => {
     e.preventDefault();
     setError('');
     setSuccess('');
-    if (!eventName || !description || !location || !imageURL) {
+    if (!eventName || !description || !location) {
       setError('All fields are required.');
       return;
     }
@@ -47,7 +47,7 @@ const Create = () => {
           <h1 className="text-3xl font-bold mb-6 text-center">Create a Hangout Spot Post</h1>
           <form onSubmit={handleSubmit} className="space-y-6 bg-white p-8 rounded-xl shadow w-full">
             <div>
-              <label className="block font-semibold mb-1">Event Name</label>
+              <label className="block font-semibold mb-1">Spot Name</label>
               <input
                 type="text"
                 className="w-full border border-gray-300 rounded-lg px-4 py-2"
@@ -85,7 +85,6 @@ const Create = () => {
                 value={imageURL}
                 onChange={e => setImageURL(e.target.value)}
                 placeholder="https://..."
-                required
               />
             </div>
             <button type="submit" className="bg-black text-white px-6 py-2 rounded-lg font-semibold hover:bg-gray-800 transition">Create Post</button>

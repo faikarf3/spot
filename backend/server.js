@@ -61,6 +61,18 @@ userSchema.pre('save', async function(next) {
 
 const User = mongoose.model('User', userSchema);
 
+// Post schema and model
+const postSchema = new mongoose.Schema({
+  eventName: { type: String, required: true },
+  description: { type: String, required: true },
+  location: { type: String, required: true },
+  imageURL: { type: String }, // not required
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  userName: { type: String, required: true },
+}, { timestamps: true });
+
+const Post = mongoose.model('Post', postSchema);
+
 // Health check
 app.get('/', (req, res) => {
   res.json({ message: 'Spot Backend API is running!' });
@@ -230,6 +242,32 @@ app.post('/api/login', async (req, res) => {
 		console.error('Login error:', err);
 		res.status(500).json({ success: false, message: 'Server error.' });
 	}
+});
+
+// Create a new post
+app.post('/api/posts', async (req, res) => {
+  try {
+    const { eventName, description, location, imageURL, userId, userName } = req.body;
+    if (!eventName || !description || !location || !userId || !userName) {
+      return res.status(400).json({ success: false, message: 'All fields except imageURL are required.' });
+    }
+    const post = new Post({ eventName, description, location, imageURL, userId, userName });
+    await post.save();
+    res.status(201).json({ success: true, message: 'Post created successfully.', post });
+  } catch (err) {
+    console.error('Create post error:', err);
+    res.status(500).json({ success: false, message: 'Server error.' });
+  }
+});
+
+// Get all posts
+app.get('/api/posts', async (req, res) => {
+  try {
+    const posts = await Post.find().sort({ createdAt: -1 });
+    res.json({ success: true, posts });
+  } catch (err) {
+    res.status(500).json({ success: false, message: 'Server error.' });
+  }
 });
 
 // Start server
