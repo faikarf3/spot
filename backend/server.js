@@ -15,10 +15,17 @@ const PORT = process.env.PORT || 3001;
 // MongoDB Atlas connection
 const MONGO_URI =
 	'mongodb+srv://spots-admin:IHFvEaHy74aSKkPH@spots.qrzztnh.mongodb.net/Users?retryWrites=true&w=majority&appName=SPOTS';
+
+// Remove deprecated options
 mongoose
-	.connect(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+	.connect(MONGO_URI)
 	.then(() => console.log('✅ Connected to MongoDB Atlas'))
-	.catch((err) => console.error('❌ MongoDB connection error:', err));
+	.catch((err) => {
+		console.error(' MongoDB connection error:', err);
+		console.log(
+			'💡 Please check your MongoDB Atlas connection string and network connectivity'
+		);
+	});
 
 app.use(cors());
 app.use(express.json());
@@ -45,7 +52,22 @@ userSchema.pre('save', async function (next) {
 	}
 });
 
+const postSchema = new mongoose.Schema(
+	{
+		eventName: { type: String, required: true },
+		imageURL: { type: String },
+		description: { type: String },
+		location: { type: String, default: 'New York' },
+		date: { type: String, default: '07/25' },
+		time: { type: String, default: '7:00 PM' },
+		price: { type: String, default: 'Free' },
+		link: { type: String, default: 'https://google.com' },
+	},
+	{ timestamps: true }
+);
+
 const User = mongoose.model('User', userSchema, 'user');
+const Post = mongoose.model('Post', postSchema, 'posts');
 
 app.get('/', (req, res) => {
 	res.json({
@@ -196,6 +218,101 @@ app.post('/api/login', async (req, res) => {
 		});
 	} catch (err) {
 		console.error('Login error:', err);
+		res.status(500).json({ success: false, message: 'Server error.' });
+	}
+});
+
+// Create a new post
+app.post('/api/posts', async (req, res) => {
+	try {
+		const { eventName, imageURL, description } = req.body;
+		if (!eventName) {
+			return res
+				.status(400)
+				.json({ success: false, message: 'Event name is required.' });
+		}
+
+		const post = new Post({ eventName, imageURL, description });
+		await post.save();
+
+		res
+			.status(201)
+			.json({ success: true, message: 'Post created successfully.', post });
+	} catch (error) {
+		console.error('Error creating post:', error);
+		res.status(500).json({ success: false, message: 'Server error.' });
+	}
+});
+
+// Get all posts
+app.get('/api/posts', async (req, res) => {
+	try {
+		const posts = await Post.find();
+		res.json({ success: true, posts });
+	} catch (error) {
+		console.error('Error fetching posts:', error);
+		res.status(500).json({ success: false, message: 'Server error.' });
+	}
+});
+
+// Get post by ID
+app.get('/api/posts/:id', async (req, res) => {
+	try {
+		const post = await Post.findById(req.params.id);
+		if (!post) {
+			return res
+				.status(404)
+				.json({ success: false, message: 'Post not found.' });
+		}
+		res.json({ success: true, post });
+	} catch (error) {
+		console.error('Error fetching post:', error);
+		res.status(500).json({ success: false, message: 'Server error.' });
+	}
+});
+
+// Update post by ID
+app.put('/api/posts/:id', async (req, res) => {
+	try {
+		const {
+			eventName,
+			imageURL,
+			description,
+			location,
+			date,
+			time,
+			price,
+			link,
+		} = req.body;
+		const post = await Post.findByIdAndUpdate(
+			req.params.id,
+			{ eventName, imageURL, description, location, date, time, price, link },
+			{ new: true, runValidators: true }
+		);
+		if (!post) {
+			return res
+				.status(404)
+				.json({ success: false, message: 'Post not found.' });
+		}
+		res.json({ success: true, message: 'Post updated successfully.', post });
+	} catch (error) {
+		console.error('Error updating post:', error);
+		res.status(500).json({ success: false, message: 'Server error.' });
+	}
+});
+
+// Delete post by ID
+app.delete('/api/posts/:id', async (req, res) => {
+	try {
+		const post = await Post.findByIdAndDelete(req.params.id);
+		if (!post) {
+			return res
+				.status(404)
+				.json({ success: false, message: 'Post not found.' });
+		}
+		res.json({ success: true, message: 'Post deleted successfully.' });
+	} catch (error) {
+		console.error('Error deleting post:', error);
 		res.status(500).json({ success: false, message: 'Server error.' });
 	}
 });
