@@ -16,7 +16,7 @@ const Profile = () => {
 
   useEffect(() => {
     if (localUser && localUser.id) {
-      fetch(`http://localhost:3001/api/users/${localUser.id}`)
+      fetch(`https://spots-d5ze.onrender.com/api/users/${localUser.id}`)
         .then(res => res.json())
         .then(data => {
           if (data.success) setUser(data.user);

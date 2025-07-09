@@ -127,7 +127,7 @@ const Dashboard = () => {
 		const fetchEvents = async (limit = 3) => {
 			setLoading(true);
 			try {
-				const response = await fetch('http://localhost:3001/getData');
+				const response = await fetch('https://spots-d5ze.onrender.com/getData');
 				const data = await response.json();
 				if (data.success) {
 					setEvents(data.data.slice(0, limit));
