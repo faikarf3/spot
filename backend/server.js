@@ -5,6 +5,7 @@ import axios from 'axios';
 import * as cheerio from 'cheerio';
 import mongoose from 'mongoose';
 import bcrypt from 'bcrypt';
+import process from 'process';
 
 dotenv.config();
 
@@ -12,8 +13,10 @@ const app = express();
 const PORT = process.env.PORT || 3001;
 
 // MongoDB Atlas connection
-const MONGO_URI = 'mongodb+srv://spots-admin:IHFvEaHy74aSKkPH@spots.qrzztnh.mongodb.net/Users?retryWrites=true&w=majority&appName=SPOTS';
-mongoose.connect(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+const MONGO_URI =
+	'mongodb+srv://spots-admin:IHFvEaHy74aSKkPH@spots.qrzztnh.mongodb.net/Users?retryWrites=true&w=majority&appName=SPOTS';
+mongoose
+	.connect(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
 	.then(() => console.log('✅ Connected to MongoDB Atlas'))
 	.catch((err) => console.error('❌ MongoDB connection error:', err));
 
@@ -21,14 +24,17 @@ app.use(cors());
 app.use(express.json());
 
 // User schema and model
-const userSchema = new mongoose.Schema({
-	username: { type: String, required: true, unique: true },
-	email: { type: String, required: true, unique: true },
-	password: { type: String, required: true }, // hashed password
-}, { timestamps: true });
+const userSchema = new mongoose.Schema(
+	{
+		username: { type: String, required: true, unique: true },
+		email: { type: String, required: true, unique: true },
+		password: { type: String, required: true }, // hashed password
+	},
+	{ timestamps: true }
+);
 
 // Hash password before saving
-userSchema.pre('save', async function(next) {
+userSchema.pre('save', async function (next) {
 	if (!this.isModified('password')) return next();
 	try {
 		const salt = await bcrypt.genSalt(10);
@@ -78,26 +84,28 @@ async function scrapeEvents() {
 
 		const events = [];
 
-		
 		$('h2').each((i, element) => {
-			const eventNumber = $(element).text().trim();
-			const eventName = $(element).next('h2').text().trim();
-			const imageUrl = $(element).next('figure').find('img').attr('src');
-			const description = $(element).next('figure').next('p').text().trim();
-			// Get the ticket link if it exists
-			const ticketLink = $(element)
-				.next('figure')
-				.next('p')
-				.find('a')
-				.attr('href');
+			const h2 = $(element);
+			const parent = h2.closest('section.article__body');
+			const figure = parent.find('figure').first();
+			const img = figure.find('img');
+			const imageUrl = img.attr('src');
+			const caption = figure.find('figcaption').text().trim();
+
+			const eventName = h2.text().trim();
+			const description = h2.next('p').text().trim();
+			const ticketLink = h2.next('p').find('a').attr('href');
+
 			events.push({
-				eventNumber,
 				eventName,
 				imageUrl,
 				description,
 				ticketLink,
+				caption,
 			});
 		});
+
+		console.log(events);
 
 		return events;
 	} catch (error) {
@@ -111,16 +119,22 @@ app.post('/api/register', async (req, res) => {
 	try {
 		const { username, email, password } = req.body;
 		if (!username || !email || !password) {
-			return res.status(400).json({ success: false, message: 'All fields are required.' });
+			return res
+				.status(400)
+				.json({ success: false, message: 'All fields are required.' });
 		}
 		// Check if user already exists
 		const existingUser = await User.findOne({ $or: [{ email }, { username }] });
 		if (existingUser) {
-			return res.status(409).json({ success: false, message: 'User already exists.' });
+			return res
+				.status(409)
+				.json({ success: false, message: 'User already exists.' });
 		}
 		const user = new User({ username, email, password });
 		await user.save();
-		res.status(201).json({ success: true, message: 'User registered successfully.' });
+		res
+			.status(201)
+			.json({ success: true, message: 'User registered successfully.' });
 	} catch (err) {
 		console.error('Registration error:', err);
 		res.status(500).json({ success: false, message: 'Server error.' });
@@ -132,7 +146,8 @@ app.get('/api/users', async (req, res) => {
 	try {
 		const users = await User.find({}, '-password'); // Exclude password field
 		res.json({ success: true, users });
-	} catch (err) {
+	} catch (error) {
+		console.error('Error fetching users:', error);
 		res.status(500).json({ success: false, message: 'Server error.' });
 	}
 });
@@ -142,10 +157,13 @@ app.get('/api/users/:id', async (req, res) => {
 	try {
 		const user = await User.findById(req.params.id, '-password');
 		if (!user) {
-			return res.status(404).json({ success: false, message: 'User not found.' });
+			return res
+				.status(404)
+				.json({ success: false, message: 'User not found.' });
 		}
 		res.json({ success: true, user });
-	} catch (err) {
+	} catch (error) {
+		console.error('Error fetching user by ID:', error);
 		res.status(500).json({ success: false, message: 'Server error.' });
 	}
 });
@@ -155,17 +173,27 @@ app.post('/api/login', async (req, res) => {
 	try {
 		const { email, password } = req.body;
 		if (!email || !password) {
-			return res.status(400).json({ success: false, message: 'Email and password are required.' });
+			return res
+				.status(400)
+				.json({ success: false, message: 'Email and password are required.' });
 		}
 		const user = await User.findOne({ email });
 		if (!user) {
-			return res.status(401).json({ success: false, message: 'Invalid email or password.' });
+			return res
+				.status(401)
+				.json({ success: false, message: 'Invalid email or password.' });
 		}
 		const isMatch = await bcrypt.compare(password, user.password);
 		if (!isMatch) {
-			return res.status(401).json({ success: false, message: 'Invalid email or password.' });
+			return res
+				.status(401)
+				.json({ success: false, message: 'Invalid email or password.' });
 		}
-		res.json({ success: true, message: 'Login successful.', user: { username: user.username, email: user.email, id: user._id } });
+		res.json({
+			success: true,
+			message: 'Login successful.',
+			user: { username: user.username, email: user.email, id: user._id },
+		});
 	} catch (err) {
 		console.error('Login error:', err);
 		res.status(500).json({ success: false, message: 'Server error.' });

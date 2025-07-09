@@ -132,6 +132,8 @@ const Dashboard = () => {
 				if (data.success) {
 					setEvents(data.data.slice(0, limit));
 				}
+
+				console.log(data.data);
 			} catch (error) {
 				console.error('Error fetching events:', error);
 			} finally {
