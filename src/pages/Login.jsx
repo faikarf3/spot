@@ -11,12 +11,11 @@ export default function Login() {
   const [success, setSuccess] = useState('');
   const navigate = useNavigate();
 
-  // On mount, check either storage for a saved user
   useEffect(() => {
     const stored = JSON.parse(
       localStorage.getItem('user') || sessionStorage.getItem('user') || 'null'
     );
-    
+    // You can auto-redirect if already logged in
   }, []);
 
   const handleSubmit = async (e) => {
@@ -47,6 +46,7 @@ export default function Login() {
       <div className="max-w-md w-full bg-white p-8 rounded-2xl shadow-lg">
         <h1 className="text-2xl font-bold text-center mb-4">Welcome Back</h1>
         <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Email Input */}
           <div>
             <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
               Email address
@@ -63,6 +63,8 @@ export default function Login() {
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
             />
           </div>
+
+          {/* Password Input */}
           <div>
             <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
               Password
@@ -88,6 +90,8 @@ export default function Login() {
               </button>
             </div>
           </div>
+
+          {/* Remember & Forgot */}
           <div className="flex items-center justify-between">
             <label className="inline-flex items-center">
               <input
@@ -103,15 +107,20 @@ export default function Login() {
               Forgot password?
             </Link>
           </div>
+
+          {/* Error / Success Messages */}
           {error && <p className="text-red-500 text-sm">{error}</p>}
           {success && <p className="text-green-600 text-sm">{success}</p>}
+
+          {/* Updated Sign In Button */}
           <button
             type="submit"
-            className="w-full py-2 px-4 bg-indigo-600 text-white font-medium rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className="w-full py-3 px-6 bg-brand-primary text-white font-medium rounded-lg text-lg hover:bg-red-500 focus:outline-none focus:ring-2 focus:ring-brand-primary transition-colors"
           >
             Sign In
           </button>
         </form>
+
         <p className="mt-6 text-center text-sm text-gray-600">
           Don't have an account?{' '}
           <Link to="/signup" className="text-indigo-600 hover:underline">
@@ -122,7 +131,6 @@ export default function Login() {
     </div>
   );
 }
-
 
 
 
