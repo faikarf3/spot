@@ -10,6 +10,7 @@ import MainLayout from './components/MainLayout';
 import Dashboard from './pages/Dashboard';
 import Event from './pages/Event';
 import Profile from './pages/Profile';
+import Create from './pages/Create';
 import './App.css';
 
 function App() {
@@ -106,6 +107,15 @@ function App() {
           element={
             <MainLayout>
               <Profile />
+            </MainLayout>
+          }
+        />
+
+        <Route
+          path="/create"
+          element={
+            <MainLayout>
+              <Create />
             </MainLayout>
           }
         />
