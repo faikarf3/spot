@@ -33,7 +33,7 @@ export default function Login() {
       if (data.success) {
         localStorage.setItem('user', JSON.stringify(data.user));
         setSuccess('Login successful! Redirecting to home...');
-        setTimeout(() => navigate('/'), 1000);
+        setTimeout(() => navigate('/Dashboard'), 1000);
       } else {
         setError(data.message || 'Login failed.');
       }
