@@ -9,7 +9,7 @@ const SectionTitle = ({ children }) => (
 	</h2>
 );
 
-const FeaturedEvents = ({ events = [], loading = false }) => {
+const FeaturedEvents = ({ events = [], loading = false, searchTerm = '' }) => {
 	if (loading) {
 		return (
 			<section>
@@ -21,17 +21,39 @@ const FeaturedEvents = ({ events = [], loading = false }) => {
 		);
 	}
 
+	// Filter events based on search term
+	const filteredEvents = events.filter((event) => {
+		if (!searchTerm) return true;
+		const searchLower = searchTerm.toLowerCase();
+		return (
+			event.eventName?.toLowerCase().includes(searchLower) ||
+			event.description?.toLowerCase().includes(searchLower) ||
+			event.caption?.toLowerCase().includes(searchLower)
+		);
+	});
+
+	if (searchTerm && filteredEvents.length === 0) {
+		return (
+			<section>
+				<SectionTitle>Featured Events</SectionTitle>
+				<div className="flex gap-6 flex-wrap justify-center">
+					<div className="text-center py-8 text-gray-500">
+						No events found matching "{searchTerm}"
+					</div>
+				</div>
+			</section>
+		);
+	}
+
 	return (
 		<section>
 			<SectionTitle>Featured Events</SectionTitle>
 			<div className="flex gap-6 flex-wrap justify-center">
-				{events.map((event, i) => (
+				{filteredEvents.map((event, i) => (
 					<EventCard
 						key={event.eventNumber || i}
 						id={event.eventNumber}
-						image={
-							event.imageUrl
-						}
+						image={event.imageUrl}
 						title={event.eventName || 'Event'}
 						description={event.description || 'No description available'}
 					/>
@@ -41,7 +63,7 @@ const FeaturedEvents = ({ events = [], loading = false }) => {
 	);
 };
 
-const PopularSpots = () => {
+const PopularSpots = ({ searchTerm = '' }) => {
 	const spots = [
 		{
 			id: 'spot-1',
@@ -68,11 +90,35 @@ const PopularSpots = () => {
 			description: 'Live jazz performances nightly',
 		},
 	];
+
+	// Filter spots based on search term
+	const filteredSpots = spots.filter((spot) => {
+		if (!searchTerm) return true;
+		const searchLower = searchTerm.toLowerCase();
+		return (
+			spot.title.toLowerCase().includes(searchLower) ||
+			spot.description.toLowerCase().includes(searchLower)
+		);
+	});
+
+	if (searchTerm && filteredSpots.length === 0) {
+		return (
+			<section>
+				<SectionTitle>Popular Spots</SectionTitle>
+				<div className="flex gap-6 flex-wrap justify-center">
+					<div className="text-center py-8 text-gray-500">
+						No spots found matching "{searchTerm}"
+					</div>
+				</div>
+			</section>
+		);
+	}
+
 	return (
 		<section>
 			<SectionTitle>Popular Spots</SectionTitle>
 			<div className="flex gap-6 flex-wrap justify-center">
-				{spots.map((s, i) => (
+				{filteredSpots.map((s) => (
 					<EventCard key={s.id} {...s} />
 				))}
 			</div>
@@ -80,7 +126,7 @@ const PopularSpots = () => {
 	);
 };
 
-const RecommendedForYou = () => {
+const RecommendedForYou = ({ searchTerm = '' }) => {
 	const recs = [
 		{
 			id: 'rec-1',
@@ -107,11 +153,35 @@ const RecommendedForYou = () => {
 			description: 'Discuss your favorite books',
 		},
 	];
+
+	// search bar functionality
+	const filteredRecs = recs.filter((rec) => {
+		if (!searchTerm) return true;
+		const searchLower = searchTerm.toLowerCase();
+		return (
+			rec.title.toLowerCase().includes(searchLower) ||
+			rec.description.toLowerCase().includes(searchLower)
+		);
+	});
+
+	if (searchTerm && filteredRecs.length === 0) {
+		return (
+			<section>
+				<SectionTitle>Recommended for You</SectionTitle>
+				<div className="flex gap-6 flex-wrap justify-center">
+					<div className="text-center py-8 text-gray-500">
+						No recommendations found matching "{searchTerm}"
+					</div>
+				</div>
+			</section>
+		);
+	}
+
 	return (
 		<section>
 			<SectionTitle>Recommended for You</SectionTitle>
 			<div className="flex gap-6 flex-wrap justify-center">
-				{recs.map((r, i) => (
+				{filteredRecs.map((r) => (
 					<EventCard key={r.id} {...r} />
 				))}
 			</div>
@@ -122,6 +192,7 @@ const RecommendedForYou = () => {
 const Dashboard = () => {
 	const [events, setEvents] = useState([]);
 	const [loading, setLoading] = useState(false);
+	const [searchTerm, setSearchTerm] = useState('');
 
 	useEffect(() => {
 		const fetchEvents = async (limit = 3) => {
@@ -144,6 +215,10 @@ const Dashboard = () => {
 		fetchEvents();
 	}, []); // Fetch once when component mounts
 
+	const handleSearchChange = (e) => {
+		setSearchTerm(e.target.value);
+	};
+
 	return (
 		<div className="bg-[#f9f6f5] min-h-screen flex flex-col">
 			<Nav />
@@ -152,12 +227,18 @@ const Dashboard = () => {
 					<input
 						type="text"
 						placeholder="Search for events or places..."
+						value={searchTerm}
+						onChange={handleSearchChange}
 						className="w-full max-w-xl mx-auto block rounded-md border border-gray-300 px-4 py-3 text-brand-text-primary bg-white focus:outline-none focus:ring-2 focus:ring-brand-primary"
 					/>
 				</div>
-				<FeaturedEvents events={events} loading={loading} />
-				<PopularSpots />
-				<RecommendedForYou />
+				<FeaturedEvents
+					events={events}
+					loading={loading}
+					searchTerm={searchTerm}
+				/>
+				<PopularSpots searchTerm={searchTerm} />
+				<RecommendedForYou searchTerm={searchTerm} />
 			</div>
 			<Footer />
 		</div>

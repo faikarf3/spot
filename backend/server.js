@@ -200,9 +200,7 @@ app.post('/api/login', async (req, res) => {
 	}
 });
 
-// Start server
 app.listen(PORT, () => {
-	console.log(`🚀 Server running on port ${PORT}`);
-	console.log(`📍 Health check: http://localhost:${PORT}/`);
-	console.log(`📊 Data endpoint: http://localhost:${PORT}/getData`);
+	console.log(` Server running on port ${PORT}`);
+	console.log(` Data endpoint: http://localhost:${PORT}/getData`);
 });
