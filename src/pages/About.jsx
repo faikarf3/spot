@@ -11,7 +11,7 @@ function About() {
 				</p>
 				<a
 					href="/"
-					className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-lg transition-colors"
+					className="bg-brand-primary text-white px-6 py-3 rounded-md text-lg font-medium hover:bg-red-500 transition-colors"
 				>
 					Back to Home
 				</a>
