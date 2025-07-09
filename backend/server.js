@@ -7,11 +7,13 @@ import mongoose from 'mongoose';
 import bcrypt from 'bcrypt';
 import crypto from 'crypto';
 import nodemailer from 'nodemailer';
+import jwt from 'jsonwebtoken';
 
 dotenv.config();  // loads environment variables from .env into process.env
 
 const app = express();
 const PORT = process.env.PORT || 3001;
+const JWT_SECRET = process.env.JWT_SECRET || 'your_jwt_secret';
 
 // MongoDB Atlas connection (using MONGODB_URI from .env)
 const MONGO_URI = process.env.MONGODB_URI;
@@ -113,22 +115,7 @@ app.post('/api/register', async (req, res) => {
   }
 });
 
-// Login existing user
-app.post('/api/login', async (req, res) => {
-  try {
-    const { email, password } = req.body;
-    if (!email || !password) return res.status(400).json({ success: false, message: 'Email and password are required.' });
-    const user = await User.findOne({ email });
-    if (!user) return res.status(401).json({ success: false, message: 'Invalid email or password.' });
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) return res.status(401).json({ success: false, message: 'Invalid email or password.' });
-    const { password: pwd, ...userData } = user.toObject();
-    res.json({ success: true, user: userData });
-  } catch (err) {
-    console.error('Login error:', err);
-    res.status(500).json({ success: false, message: 'Server error.' });
-  }
-});
+
 
 // Get a user by ID
 app.get('/api/users/:id', async (req, res) => {
@@ -210,6 +197,39 @@ app.post('/api/reset-password/:token', async (req, res) => {
     console.error('Reset-password error:', err);
     res.status(500).json({ success: false, message: 'Server error.' });
   }
+});
+
+// Login endpoint
+app.post('/api/login', async (req, res) => {
+	try {
+		const { email, password } = req.body;
+		if (!email || !password) {
+			return res.status(400).json({ success: false, message: 'Email and password are required.' });
+		}
+		const user = await User.findOne({ email });
+		if (!user) {
+			return res.status(401).json({ success: false, message: 'Invalid email or password.' });
+		}
+		const isMatch = await bcrypt.compare(password, user.password);
+		if (!isMatch) {
+			return res.status(401).json({ success: false, message: 'Invalid email or password.' });
+		}
+		// Generate JWT
+		const token = jwt.sign(
+			{ id: user._id, email: user.email, username: user.username },
+			JWT_SECRET,
+			{ expiresIn: '1h' }
+		);
+		res.json({
+			success: true,
+			message: 'Login successful.',
+			user: { username: user.username, email: user.email, id: user._id },
+			token
+		});
+	} catch (err) {
+		console.error('Login error:', err);
+		res.status(500).json({ success: false, message: 'Server error.' });
+	}
 });
 
 // Start server
