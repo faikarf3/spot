@@ -17,7 +17,7 @@ export default function ResetPassword() {
     }
     try {
       const res = await fetch(
-        `http://localhost:3001/api/reset-password/${token}`,
+        `https://spots-d5ze.onrender.com/api/reset-password/${token}`,
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },

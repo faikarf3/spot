@@ -24,7 +24,7 @@ export default function Login() {
     setError('');
     setSuccess('');
     try {
-      const res = await fetch('http://localhost:3001/api/login', {
+      const res = await fetch('https://spots-d5ze.onrender.com/api/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),

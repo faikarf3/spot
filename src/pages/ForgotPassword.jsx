@@ -12,7 +12,7 @@ export default function ForgotPassword() {
     setError('');
     setStatus('');
     try {
-      const res = await fetch('http://localhost:3001/api/forgot-password', {
+      const res = await fetch('https://spots-d5ze.onrender.com/api/forgot-password', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email }),

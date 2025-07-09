@@ -22,7 +22,7 @@ export default function Signup() {
     );
     if (password !== confirmPassword) return setError('Passwords do not match.');
     try {
-      const res = await fetch('http://localhost:3001/api/register', {
+      const res = await fetch('https://spots-d5ze.onrender.com/api/register', {
         method: 'POST', headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({username: name, email, password})
       });
