@@ -1,18 +1,25 @@
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
 
-/**
- * Login component renders a sign-in form with email, password,
- * remember-me checkbox, and links. 
- */
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 
 export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [remember, setRemember] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const navigate = useNavigate();
+
+  // On mount, check either storage for a saved user
+  useEffect(() => {
+    const stored = JSON.parse(
+      localStorage.getItem('user') || sessionStorage.getItem('user') || 'null'
+    );
+    if (stored) {
+      navigate('/'); // redirect to home if already logged in
+    }
+  }, [navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -22,18 +29,18 @@ export default function Login() {
       const res = await fetch('http://localhost:3001/api/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password })
+        body: JSON.stringify({ email, password }),
       });
       const data = await res.json();
       if (data.success) {
-        localStorage.setItem('user', JSON.stringify(data.user));
-        localStorage.setItem('token', data.token);
-        setSuccess('Login successful! Redirecting to profile...');
-        setTimeout(() => navigate('/profile'), 1000);
+        const storage = remember ? localStorage : sessionStorage;
+        storage.setItem('user', JSON.stringify(data.user));
+        setSuccess('Login successful! Redirecting to home...');
+        setTimeout(() => navigate('/'), 1000);
       } else {
         setError(data.message || 'Login failed.');
       }
-    } catch (err) {
+    } catch {
       setError('Server error. Please try again later.');
     }
   };
@@ -41,10 +48,7 @@ export default function Login() {
   return (
     <div className="h-screen flex items-center justify-center bg-gray-50">
       <div className="max-w-md w-full bg-white p-8 rounded-2xl shadow-lg">
-        <div className="text-center mb-6">
-          <h1 className="text-2xl font-bold">Welcome Back</h1>
-          <p className="text-gray-600">Sign in to your account</p>
-        </div>
+        <h1 className="text-2xl font-bold text-center mb-4">Welcome Back</h1>
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
             <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
@@ -54,6 +58,7 @@ export default function Login() {
               id="email"
               name="email"
               type="email"
+              autoComplete="email"
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -61,23 +66,31 @@ export default function Login() {
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
             />
           </div>
-
           <div>
             <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
               Password
             </label>
-            <input
-              id="password"
-              name="password"
-              type="password"
-              required
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="••••••••"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
-            />
+            <div className="relative">
+              <input
+                id="password"
+                name="password"
+                type={showPassword ? 'text' : 'password'}
+                autoComplete="current-password"
+                required
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="••••••••"
+                className="w-full px-4 py-2 pr-10 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute inset-y-0 right-0 pr-3 flex items-center text-sm text-gray-600"
+              >
+                {showPassword ? 'Hide' : 'Show'}
+              </button>
+            </div>
           </div>
-
           <div className="flex items-center justify-between">
             <label className="inline-flex items-center">
               <input
@@ -93,10 +106,8 @@ export default function Login() {
               Forgot password?
             </Link>
           </div>
-
           {error && <p className="text-red-500 text-sm">{error}</p>}
           {success && <p className="text-green-600 text-sm">{success}</p>}
-
           <button
             type="submit"
             className="w-full py-2 px-4 bg-indigo-600 text-white font-medium rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
@@ -104,7 +115,6 @@ export default function Login() {
             Sign In
           </button>
         </form>
-
         <p className="mt-6 text-center text-sm text-gray-600">
           Don't have an account?{' '}
           <Link to="/signup" className="text-indigo-600 hover:underline">
@@ -115,3 +125,7 @@ export default function Login() {
     </div>
   );
 }
+
+
+
+
