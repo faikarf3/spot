@@ -16,10 +16,8 @@ export default function Login() {
     const stored = JSON.parse(
       localStorage.getItem('user') || sessionStorage.getItem('user') || 'null'
     );
-    if (stored) {
-      navigate('/'); // redirect to home if already logged in
-    }
-  }, [navigate]);
+    
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -33,8 +31,7 @@ export default function Login() {
       });
       const data = await res.json();
       if (data.success) {
-        const storage = remember ? localStorage : sessionStorage;
-        storage.setItem('user', JSON.stringify(data.user));
+        localStorage.setItem('user', JSON.stringify(data.user));
         setSuccess('Login successful! Redirecting to home...');
         setTimeout(() => navigate('/'), 1000);
       } else {
