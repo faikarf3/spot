@@ -14,6 +14,7 @@ const PORT = process.env.PORT || 3001;
 
 // MongoDB Atlas connection
 const MONGO_URI =
+	process.env.MONGO_URI ||
 	'mongodb+srv://spots-admin:IHFvEaHy74aSKkPH@spots.qrzztnh.mongodb.net/Users?retryWrites=true&w=majority&appName=SPOTS';
 
 // Remove deprecated options
