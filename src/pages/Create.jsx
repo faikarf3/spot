@@ -2,32 +2,41 @@ import React, { useState } from 'react';
 import ProfileSidebar from '../components/ProfileSidebar';
 
 const Create = () => {
-  const [name, setName] = useState('');
+  const [eventName, setEventName] = useState('');
   const [description, setDescription] = useState('');
   const [location, setLocation] = useState('');
-  const [photos, setPhotos] = useState([]);
-  const [photoPreviews, setPhotoPreviews] = useState([]);
-  const [rating, setRating] = useState(0);
+  const [imageURL, setImageURL] = useState('');
   const [success, setSuccess] = useState('');
+  const [error, setError] = useState('');
 
-  const handlePhotoChange = (e) => {
-    const files = Array.from(e.target.files);
-    setPhotos(files);
-    setPhotoPreviews(files.map(file => URL.createObjectURL(file)));
-  };
-
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // For now, just log the data
-    console.log({ name, description, location, photos, rating });
-    setSuccess('Post created successfully!');
-    setName('');
-    setDescription('');
-    setLocation('');
-    setPhotos([]);
-    setPhotoPreviews([]);
-    setRating(0);
-    setTimeout(() => setSuccess(''), 2000);
+    setError('');
+    setSuccess('');
+    if (!eventName || !description || !location || !imageURL) {
+      setError('All fields are required.');
+      return;
+    }
+    try {
+      const res = await fetch('https://spots-d5ze.onrender.com/api/posts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ eventName, description, location, imageURL })
+      });
+      const data = await res.json();
+      if (data.success) {
+        setSuccess('Post created successfully!');
+        setEventName('');
+        setDescription('');
+        setLocation('');
+        setImageURL('');
+        setTimeout(() => setSuccess(''), 2000);
+      } else {
+        setError(data.message || 'Failed to create post.');
+      }
+    } catch {
+      setError('Server error. Please try again later.');
+    }
   };
 
   return (
@@ -38,12 +47,12 @@ const Create = () => {
           <h1 className="text-3xl font-bold mb-6 text-center">Create a Hangout Spot Post</h1>
           <form onSubmit={handleSubmit} className="space-y-6 bg-white p-8 rounded-xl shadow w-full">
             <div>
-              <label className="block font-semibold mb-1">Name of Hangout Spot</label>
+              <label className="block font-semibold mb-1">Event Name</label>
               <input
                 type="text"
                 className="w-full border border-gray-300 rounded-lg px-4 py-2"
-                value={name}
-                onChange={e => setName(e.target.value)}
+                value={eventName}
+                onChange={e => setEventName(e.target.value)}
                 required
               />
             </div>
@@ -69,39 +78,19 @@ const Create = () => {
               />
             </div>
             <div>
-              <label className="block font-semibold mb-1">Photos</label>
+              <label className="block font-semibold mb-1">Image URL</label>
               <input
-                type="file"
-                multiple
-                accept="image/*"
-                onChange={handlePhotoChange}
+                type="text"
+                className="w-full border border-gray-300 rounded-lg px-4 py-2"
+                value={imageURL}
+                onChange={e => setImageURL(e.target.value)}
+                placeholder="https://..."
+                required
               />
-              <div className="flex gap-4 mt-2 flex-wrap">
-                {photoPreviews.map((src, i) => (
-                  <img key={i} src={src} alt="Preview" className="w-24 h-24 object-cover rounded-lg border" />
-                ))}
-              </div>
-            </div>
-            <div>
-              <label className="block font-semibold mb-1">Rating</label>
-              <div className="flex gap-2 items-center">
-                {[1,2,3,4,5].map(num => (
-                  <label key={num} className="flex flex-col items-center cursor-pointer">
-                    <input
-                      type="radio"
-                      name="rating"
-                      value={num}
-                      checked={rating === num}
-                      onChange={() => setRating(num)}
-                      className="hidden"
-                    />
-                    <span className={`text-2xl ${rating >= num ? 'text-yellow-400' : 'text-gray-300'}`}>★</span>
-                  </label>
-                ))}
-              </div>
             </div>
             <button type="submit" className="bg-black text-white px-6 py-2 rounded-lg font-semibold hover:bg-gray-800 transition">Create Post</button>
             {success && <div className="text-green-600 font-semibold text-center mt-2">{success}</div>}
+            {error && <div className="text-red-600 font-semibold text-center mt-2">{error}</div>}
           </form>
         </div>
       </main>
