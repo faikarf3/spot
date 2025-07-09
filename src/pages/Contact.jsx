@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 export default function Contact() {
   return (
@@ -16,12 +17,14 @@ export default function Contact() {
             <p className="text-gray-700">Phone: (555) 123-4567</p>
           </div>
         </div>
-        <a
-          href="/"
-          className="inline-block mt-6 bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-lg transition-colors"
-        >
-          Back to Home
-        </a>
+        <div className="mt-6">
+          <Link
+            to="/"
+            className="inline-block bg-brand-primary text-white px-6 py-3 rounded-md text-lg font-medium hover:bg-red-500 transition-colors focus:outline-none focus:ring-2 focus:ring-brand-primary"
+          >
+            Back to Home
+          </Link>
+        </div>
       </div>
     </div>
   );
