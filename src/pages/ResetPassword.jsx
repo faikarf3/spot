@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 
@@ -94,7 +95,7 @@ export default function ResetPassword() {
 
           <button
             type="submit"
-            className="w-full py-2 px-4 bg-indigo-600 text-white font-medium rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className="w-full py-2 px-4 bg-brand-primary text-white font-medium rounded-lg hover:bg-red-500 focus:outline-none focus:ring-2 focus:ring-brand-primary transition-colors"
           >
             Reset Password
           </button>
@@ -106,4 +107,3 @@ export default function ResetPassword() {
     </div>
   );
 }
-
