@@ -35,7 +35,9 @@ export default function ForgotPassword() {
         <h1 className="text-2xl font-bold text-center mb-4">Reset Password</h1>
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">Email address</label>
+            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+              Email address
+            </label>
             <input
               id="email"
               name="email"
@@ -45,17 +47,22 @@ export default function ForgotPassword() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="you@example.com"
-              className="w-full px-4 py-2	border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
             />
           </div>
           {error && <p className="text-red-500 text-sm">{error}</p>}
           {status && <p className="text-green-600 text-sm">{status}</p>}
-          <button type="submit" className="w-full py-2 px-4 bg-indigo-600 text-white font-medium rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+          <button
+            type="submit"
+            className="w-full py-2 px-4 bg-brand-primary text-white font-medium rounded-lg hover:bg-red-500 focus:outline-none focus:ring-2 focus:ring-brand-primary transition-colors"
+          >
             Send Reset Link
           </button>
         </form>
         <p className="mt-6 text-center text-sm text-gray-600">
-          <Link to="/login" className="text-indigo-600 hover:underline">Back to Sign In</Link>
+          <Link to="/login" className="text-indigo-600 hover:underline">
+            Back to Sign In
+          </Link>
         </p>
       </div>
     </div>
